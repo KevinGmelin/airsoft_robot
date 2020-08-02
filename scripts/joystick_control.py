@@ -26,7 +26,7 @@ def callback(inputData):
 def start():
     rospy.init_node('joystick_control')
     global pub
-    pub = rospy.Publisher('arduinoIn', YawPitchMotors, queue_size=1)
+    pub = rospy.Publisher('wemos/arduinoIn', YawPitchMotors, queue_size=1)
     # subscribed to joystick inputs on topic "joy"
     rospy.Subscriber("joy", Joy, callback)
     # starts the node

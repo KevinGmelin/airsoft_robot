@@ -22,7 +22,7 @@ def callback(inputData):
 
 # Initializes everything
 def start():
-    rospy.init_node('joystick_control')
+    rospy.init_node('shooting_test')
     global pub
     pub = rospy.Publisher('turret_shoot', Empty, queue_size=1)
     # subscribed to joystick inputs on topic "joy"
