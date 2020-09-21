@@ -5,15 +5,6 @@ from sensor_msgs.msg import Joy
 from airsoft_robot.msg import YawPitchMotors
 import numpy as np
 
-# Author: Andrew Dai
-# This ROS Node converts Joystick inputs from the joy node
-# into commands for turtlesim
-
-# Receives joystick messages (subscribed to Joy topic)
-# then converts the joystick inputs into Twist commands
-# axis 1 aka left stick vertical controls linear speed
-# axis 0 aka left stick horizontal controls angular speed
-
 
 def callback(inputData):
     output_data = YawPitchMotors()
@@ -26,7 +17,7 @@ def callback(inputData):
 def start():
     rospy.init_node('joystick_control')
     global pub
-    pub = rospy.Publisher('wemos/arduinoIn', YawPitchMotors, queue_size=1)
+    pub = rospy.Publisher('arduinoIn', YawPitchMotors, queue_size=1)
     # subscribed to joystick inputs on topic "joy"
     rospy.Subscriber("joy", Joy, callback)
     # starts the node
