@@ -4,4 +4,9 @@
 	</node>
 	<node pkg="airsoft_robot" type="joystick_control.py" name="joystick_control" output="screen"/>
 	<node pkg="airsoft_robot" type="shooting_test.py" name="shooting_test" output="screen"/>
+
+	<node pkg="image_view" type="image_view" name="image_view" output="screen">
+		<param name="image_transport" value="compressed"/>
+		<remap from="image" to="/usb_cam/image_raw"/>
+	</node>
 </launch>
