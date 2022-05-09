@@ -8,8 +8,8 @@ import numpy as np
 
 def callback(inputData):
     output_data = YawPitchMotors()
-    output_data.pitch_motor = inputData.axes[4] * inputData.axes[4] * inputData.axes[4] * 500
-    output_data.yaw_motor = inputData.axes[0] * inputData.axes[0] * inputData.axes[0] * -500
+    output_data.pitch_motor = int(inputData.axes[4] * inputData.axes[4] * inputData.axes[4] * 500)
+    output_data.yaw_motor = int(inputData.axes[0] * inputData.axes[0] * inputData.axes[0] * -500)
     pub.publish(output_data)
 
 

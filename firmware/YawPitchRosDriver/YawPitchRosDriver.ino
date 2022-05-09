@@ -12,8 +12,6 @@
 #define motorYawPin 13
 #define motorPitchPin 11
 
-
-
 Servo pitch_motor, yaw_motor;
 ros::NodeHandle  nh;
 
@@ -35,6 +33,8 @@ ros::Subscriber<std_msgs::Empty> pitchUpperBoundSub("set_pitch_upper_bound", &re
 void recvPitchLowerBound(const std_msgs::Empty &empty_msg);
 ros::Subscriber<std_msgs::Empty> pitchLowerBoundSub("set_pitch_lower_bound", &recvPitchLowerBound);
 
+void initPitchBounds(const std_msgs::Empty &empty_msg);
+ros::Subscriber<std_msgs::Empty> initPitchBoundsSub("init_pitch_bounds", &initPitchBounds);
 
 
 volatile signed long encYawCount = 0;
@@ -42,7 +42,6 @@ volatile signed long encPitchCount = 0;
 
 int pitchUpperBound = 1389;
 int pitchLowerBound = -1389;
-
 
 void setup()
 {
@@ -63,14 +62,13 @@ void setup()
   nh.subscribe(sub);
   nh.subscribe(pitchUpperBoundSub);
   nh.subscribe(pitchLowerBoundSub);
+  nh.subscribe(initPitchBoundsSub);
   nh.advertise(yawEncoderPub);
   nh.advertise(pitchEncoderPub);
   
   pitch_motor.write(90);
   yaw_motor.write(90);
   delay(10);
-
-
 }
 
 void loop()
@@ -181,11 +179,36 @@ void EncoderPitchEvent()
 }
 
 void recvPitchUpperBound(const std_msgs::Empty &empty_msg)
-{
+{ 
   pitchUpperBound = encPitchCount - 100;
 }
 
 void recvPitchLowerBound(const std_msgs::Empty &empty_msg)
 {
   pitchLowerBound = encPitchCount + 100;
+}
+
+void initPitchBounds(const std_msgs::Empty &empty_msg) 
+{
+  nh.logwarn("Initializing pitch bounds");
+  pitch_motor.writeMicroseconds(-75 + 1500);
+  yaw_motor.writeMicroseconds(1500);
+  signed long oldPitchCount = encPitchCount;
+  delay(100);
+  char log_msg[40];
+  while ( encPitchCount - oldPitchCount > 3) {
+    char result[8]; // Buffer big enough for 7-character float
+    dtostrf(encPitchCount - oldPitchCount, 6, 2, result); // Leave room for too large numbers!
+    sprintf(log_msg,"Change =%s", result);
+    nh.logwarn(log_msg);
+    
+    oldPitchCount = encPitchCount;
+    delay(100);
+  }
+  pitch_motor.writeMicroseconds(1500);
+  yaw_motor.writeMicroseconds(1500);
+
+  encPitchCount = 1318;
+  pitchUpperBound = 1218;
+  pitchLowerBound = 0;
 }
